@@ -1,0 +1,28 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
+    android:alpha="0.7"
+    tools:context="com.quascenta.petersroad.activities.LoginActivity">
+
+    <!-- The primary full-screen view. This can be replaced with whatever view
+         is needed to present your content, e.g. VideoView, SurfaceView,
+         TextureView, etc. -->
+
+
+    <!-- This FrameLayout insets its children based on system windows using
+         android:fitsSystemWindows. -->
+    <FrameLayout
+        android:id="@+id/check"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_gravity="center|top"
+        android:layout_marginBottom="@dimen/activity_horizontal_margin"
+        android:fitsSystemWindows="true">
+
+
+
+    </FrameLayout>
+
+</FrameLayout>

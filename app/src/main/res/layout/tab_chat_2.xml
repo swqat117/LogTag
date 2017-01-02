@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary">
+<Button
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:id="@+id/button"
+    android:clickable="true"
+    android:text="Scan BLE"
+    android:elevation="5dp"
+    android:paddingBottom="@dimen/activity_horizontal_margin"
+    android:background="@color/colorPrimaryDark"
+    android:textColor="@color/white"
+    />
+    <ListView
+    android:id="@+id/listview"
+    android:layout_gravity="bottom"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"></ListView>
+</LinearLayout>

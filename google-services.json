@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "765652453130",
+    "project_id": "firebase-broadway"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:765652453130:android:7df4b4d778d88f65",
+        "android_client_info": {
+          "package_name": "com.quascenta.petersroad"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "765652453130-d2d2sttiqdp9n53k9n9hvvjgbeu1ome1.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.quascenta.petersroad",
+            "certificate_hash": "D330A8442ED55FED41BF4C60BB7774441F1FE6A8"
+          }
+        },
+        {
+          "client_id": "765652453130-5cj4olivn85bdi6ucn409c5k6t5kedid.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC18t_APvds_QWDq6mLRA88kYi-SQTwh3g"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

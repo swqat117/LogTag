@@ -1,0 +1,44 @@
+<resources>
+
+    <!-- Declare custom theme attributes that allow changing which styles are
+         used for button bars depending on the API level.
+         ?android:attr/buttonBarStyle is new as of API 11 so this is
+         necessary to support previous API levels. -->
+    <declare-styleable name="ButtonBarContainerTheme">
+        <attr name="metaButtonBarStyle" format="reference" />
+        <attr name="metaButtonBarButtonStyle" format="reference" />
+    </declare-styleable>
+    <declare-styleable name="Ranger">
+
+        <!-- Behaviour attributes -->
+        <attr name="displayDayOfWeek" format="boolean"/>
+        <attr name="alwaysDisplayMonth" format="boolean"/>
+
+        <!-- Days Container styling -->
+        <attr name="daysContainerBackgroundColor" format="color"/>
+
+        <attr name="dayTextColor" format="color"/>
+        <attr name="selectedDayTextColor" format="color"/>
+        <attr name="selectedDayBackgroundColor" format="color"/>
+
+        <!-- Day View styling -->
+        <attr name="dayOfWeekTextColor" format="color" />
+        <attr name="dayNumberTextColor" format="color" />
+        <attr name="monthNameTextColor" format="color" />
+
+    </declare-styleable>
+
+
+
+        <declare-styleable name="AutofitTextView">
+            <!-- Minimum size of the text. -->
+            <attr name="minTextSize" format="dimension" />
+            <!-- Amount of precision used to calculate the correct text size to fit within its
+            bounds. Lower precision is more precise and takes more time. -->
+            <attr name="precision" format="float" />
+            <!-- Defines whether to automatically resize text to fit to the view's bounds. -->
+            <attr name="sizeToFit" format="boolean" />
+        </declare-styleable>
+
+
+</resources>

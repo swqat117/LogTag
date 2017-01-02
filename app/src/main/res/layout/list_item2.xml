@@ -1,0 +1,203 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:padding="1dp">
+<android.support.v7.widget.CardView android:layout_width="400dp"
+    android:layout_height="100dp"
+    android:layout_gravity="center|top"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    card_view:cardBackgroundColor="#e3f2fd"
+    card_view:cardPreventCornerOverlap="true"
+    card_view:cardUseCompatPadding="true"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+   <LinearLayout
+       android:layout_width="match_parent"
+       android:layout_height="72dp"
+       android:orientation="horizontal">
+       <LinearLayout
+           android:layout_width="70dp"
+           android:layout_height="match_parent"
+           android:orientation="vertical">
+           <TextView
+               android:id="@+id/customer_tracking_id"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:paddingTop="4dp"
+               android:paddingStart="4dp"
+               android:layout_marginLeft="8dp"
+               android:text="@string/_812345"/>
+           <ImageView
+               android:id="@+id/iv_icon_alert"
+               android:layout_width="50dp"
+               android:layout_height="50dp"
+               android:adjustViewBounds="true"
+               android:layout_marginStart="8dp"
+
+               android:layout_gravity="top"
+               android:src="@drawable/message_alert"
+               android:scaleType="fitStart"
+                />
+
+
+       </LinearLayout>
+       <FrameLayout
+           android:layout_width="match_parent"
+           android:layout_height="match_parent"
+           android:layout_marginTop="12dp">
+           <LinearLayout
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:orientation="horizontal"
+               android:layout_gravity="center_vertical"
+               android:layout_marginBottom="16dp"
+               >
+               <TextView
+                   android:id="@+id/source_company_name"
+                   android:layout_width="142dp"
+                   android:layout_height="match_parent"
+                   android:textAllCaps="false"
+                   android:maxLines="1"
+
+                   android:ellipsize="end"
+                   android:textSize="16sp"
+                   android:text="@string/easy_solutions"/>
+
+               <TextView
+                   android:id="@+id/destination_company_name"
+                   android:layout_width="match_parent"
+                   android:layout_height="match_parent"
+                   android:textSize="16sp"
+                   android:maxLines="1"
+                   android:ellipsize="end"
+                   android:text="@string/easy_solutions"
+                   android:layout_weight="1"/>
+
+           </LinearLayout>
+
+           <LinearLayout
+               android:layout_width="match_parent"
+               android:layout_height="24dp"
+               android:orientation="horizontal"
+               android:layout_gravity="center_vertical"
+               android:layout_marginTop="8dp"
+               android:weightSum="1">
+
+               <TextView
+                   android:layout_width="wrap_content"
+                   android:layout_height="match_parent"
+
+
+                   android:paddingEnd="2dp"
+                   android:textAllCaps="false"
+                   android:text="MAA"
+                   android:id="@+id/source_location"
+                   android:maxLines="1"
+                   android:ellipsize="end"
+                   android:layout_alignParentTop="true"
+                   android:layout_alignParentStart="true"
+                   android:layout_weight="0.30" />
+
+               <View
+                   android:layout_width="64dp"
+                   android:layout_height="1dp"
+                   android:layout_gravity="center"
+                   android:background="#f44336"
+                   android:alpha="0.8"
+                   android:id="@+id/view"
+                   android:layout_centerVertical="true"
+                   android:layout_alignParentStart="true"
+                   android:layout_marginStart="105dp" />
+
+               <ImageView
+                   android:id="@+id/iv2_icon_alert"
+                   android:layout_width="24dp"
+                   android:layout_height="30dp"
+                   android:src="@drawable/ic_error_black_24dp"
+                   android:layout_marginStart="20dp"
+                   android:layout_marginBottom="8dp"
+                   android:layout_alignParentTop="true"
+                   android:layout_alignStart="@+id/view" />
+
+               <TextView
+
+                   android:layout_width="wrap_content"
+                   android:layout_height="match_parent"
+
+                   android:layout_marginStart="48dp"
+                   android:text="DXB"
+
+                   android:id="@+id/destination_location"
+                   android:layout_alignParentTop="true"
+                   android:layout_toEndOf="@+id/view" />
+
+
+           </LinearLayout>
+       </FrameLayout>
+
+   </LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+
+            android:background="#64b5f6"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/serialNumber"
+                android:layout_width="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_weight="0"
+                android:textSize="12sp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:paddingTop="2dp"
+                android:layout_height="match_parent"
+                android:text="@string/serial"/>
+            <TextView
+                android:id="@+id/device_serial_number"
+                android:layout_width="110dp"
+                android:layout_marginStart="4dp"
+                android:paddingTop="2dp"
+                android:textSize="12sp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:layout_height="match_parent"
+                android:text="@string/_110115150215"/>
+            <TextView
+                android:id="@+id/status"
+                android:layout_width="wrap_content"
+                android:layout_marginStart="54dp"
+                android:textSize="12sp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:paddingTop="2dp"
+                android:paddingStart="2dp"
+                android:paddingEnd="2dp"
+                android:textColor="#f44336"
+                android:layout_height="match_parent"
+                android:layout_weight="0"
+                android:text="@string/status"/>
+            <TextView
+                android:id="@+id/status_state"
+                android:layout_width="wrap_content"
+                android:paddingTop="2dp"
+                android:textColor="#f44336"
+                android:paddingStart="2dp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:paddingEnd="2dp"
+                android:textSize="12sp"
+                android:layout_height="match_parent"
+                android:text="@string/data_not_uploaded"/>
+        </LinearLayout>
+    </LinearLayout>
+
+</android.support.v7.widget.CardView>
+</LinearLayout>
