@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -16,7 +15,6 @@ import com.quascenta.logTag.main.models.Google_logTagUser;
 import com.quascenta.logTag.main.models.LogTagUser;
 
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -25,20 +23,18 @@ import java.util.Set;
 
 public class Userpreferences {
     static final String DEFAULT_SESSION_VALUE = "No logged in user";
-   private static SharedPreferences sharedPreferences;
-   private static Userpreferences userpreferences;
-
-   private static final String PREFERENCES_NAME = "preferences";
-   private static final String LENGTH = "_length";
     static final String USER_SESSION = "user_session_key";
     static final String USER_PREFS = "codelight_studios_user_prefs";
-
+    private static final String PREFERENCES_NAME = "preferences";
+    private static final String LENGTH = "_length";
     private static final String DEFAULT_STRING_VALUE = "";
     private static final int DEFAULT_INT_VALUE = -1;
     private static final double DEFAULT_DOUBLE_VALUE = -1d;
     private static final float DEFAULT_FLOAT_VALUE = -1f;
     private static final long DEFAULT_LONG_VALUE = -1l;
     private static final boolean DEFAULT_BOOLEAN_VALUE = false;
+    private static SharedPreferences sharedPreferences;
+    private static Userpreferences userpreferences;
 
 
     private Userpreferences(@NonNull Context context){
@@ -256,9 +252,7 @@ public class Userpreferences {
     public LogTagUser readObject( String x){
         LogTagUser user1 = new Google_logTagUser();
         Gson gson = new GsonBuilder().create();
-
         user1 = gson.fromJson(sharedPreferences.getString(x,"defaultstring"),LogTagUser.class);
-        System.out.println("Sdf"+user1.getUsername());
         return user1;
     }
 

@@ -10,8 +10,9 @@ import de.greenrobot.daogenerator.ToOne;
 public class LinkGenerator {
 
     private static final String PROJECT_DIR = System.getProperty("user.dir").replace("\\", "/");
-    public static void main(String args[]) throws Exception{
-        Schema schema = new Schema(1,"com.quascenta.petersroad.broadway.model");
+
+    public static void main(String args[]) throws Exception {
+        Schema schema = new Schema(1, "com.quascenta.petersroad.broadway.model");
 
         // 28/9/16 Entering the two schemas device and sensors
         // each device has n sensors and determining no of sensors depends on chnact from config
@@ -22,7 +23,7 @@ public class LinkGenerator {
 
         device.addStringProperty("device_name");
         device.addFloatProperty("device_interval").notNull();
-        Property device_chn =  device.addIntProperty("DEVICE_CHNACT").getProperty();
+        Property device_chn = device.addIntProperty("DEVICE_CHNACT").getProperty();
         device.addStringProperty("device_description");
         device.addLongProperty("device_tzone");
         device.addStringProperty("device_loggerid");
@@ -39,7 +40,7 @@ public class LinkGenerator {
 
 
         Entity sensorLOG = schema.addEntity("slog");
-        Property sensorLog_id =  sensorLOG.addIdProperty().primaryKey().columnName("slog_id").getProperty();
+        Property sensorLog_id = sensorLOG.addIdProperty().primaryKey().columnName("slog_id").getProperty();
         sensorLOG.addLongProperty("sl_time");
         sensorLOG.addFloatProperty("sl_value");
         sensorLOG.addBooleanProperty("sl_active");
@@ -63,7 +64,6 @@ public class LinkGenerator {
         SampleDevice.addStringProperty("sen8");
 
 
-
         Entity user = schema.addEntity("user");
         user.addStringProperty("user_name");
         user.addStringProperty("user_email");
@@ -72,12 +72,12 @@ public class LinkGenerator {
         Property userid = user.addIdProperty().columnName("user_id").getProperty();
 
 
-        ToMany UsertoDevice = user.addToMany(device,userid);
-        ToMany devicetosensors = device.addToMany(sensor,device_id);
-        ToOne sensortosensorLog = sensor.addToOne(sensorLOG,sens_id);
-        ToOne sensorLogtoUnit = sensorLOG.addToOne(unit,sensorLog_id);
+        ToMany UsertoDevice = user.addToMany(device, userid);
+        ToMany devicetosensors = device.addToMany(sensor, device_id);
+        ToOne sensortosensorLog = sensor.addToOne(sensorLOG, sens_id);
+        ToOne sensorLogtoUnit = sensorLOG.addToOne(unit, sensorLog_id);
 
 
-        new DaoGenerator().generateAll(schema,"app/src/main/java");
+        new DaoGenerator().generateAll(schema, "app/src/main/java");
     }
 }

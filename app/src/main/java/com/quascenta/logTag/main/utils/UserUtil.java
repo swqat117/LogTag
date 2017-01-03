@@ -58,8 +58,8 @@ public class UserUtil {
                 facebookUser.setProfileLink(object.getString(LogTagLoginConfig.FacebookFields.LINK));
             if (object.has(LogTagLoginConfig.FacebookFields.ID))
                 facebookUser.setUserId(object.getString(LogTagLoginConfig.FacebookFields.ID));
-            if (object.has(LogTagLoginConfig.FacebookFields.NAME))
-                facebookUser.setProfileName(object.getString(LogTagLoginConfig.FacebookFields.NAME));
+            if (object.has("name"))
+                facebookUser.setUsername(object.getString("name"));
             if (object.has(LogTagLoginConfig.FacebookFields.FIRST_NAME))
                 facebookUser.setFirstName(object.getString(LogTagLoginConfig.FacebookFields.FIRST_NAME));
             if (object.has(LogTagLoginConfig.FacebookFields.MIDDLE_NAME))

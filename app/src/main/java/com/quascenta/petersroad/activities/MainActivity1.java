@@ -3,6 +3,7 @@ package com.quascenta.petersroad.activities;
 /**
  * Created by AKSHAY on 11/3/2016.
  */
+
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -25,10 +26,12 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.SearchView;
 
+import com.quascenta.logTag.main.manager.Userpreferences;
+import com.quascenta.logTag.main.models.LogTagUser;
+import com.quascenta.petersroad.Utils.Objectgenerator;
 import com.quascenta.petersroad.adapters.DeviceListAdapter;
 import com.quascenta.petersroad.broadway.R;
 import com.quascenta.petersroad.fragments.CheeseListFragment;
-import com.quascenta.petersroad.Utils.Objectgenerator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,9 +55,20 @@ public class MainActivity1 extends AppCompatActivity implements SearchView.OnQue
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        if (Userpreferences.with(getApplicationContext()).contains("user_session_key")) {
+            LogTagUser currentUser = Userpreferences.with(getApplicationContext()).readObject("user_session_key");
+            String x = Userpreferences.with(getApplicationContext()).read("user_session_key", "Unavailable");
+            setTitle(currentUser.getUsername());
+            init();
+        }
 
+
+    }
+
+    private void init() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
 
         final ActionBar ab = getSupportActionBar();
         ab.setHomeAsUpIndicator(R.drawable.ic_mail_black_24dp);
@@ -87,10 +101,6 @@ public class MainActivity1 extends AppCompatActivity implements SearchView.OnQue
                         .setAction("Action", null).show();
             }
         });
-
-
-    }
-    private void init(){
 
     }
 

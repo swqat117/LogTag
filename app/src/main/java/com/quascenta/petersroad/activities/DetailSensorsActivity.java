@@ -3,6 +3,7 @@ package com.quascenta.petersroad.activities;
 /**
  * Created by AKSHAY on 11/3/2016.
  */
+
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,13 +15,12 @@ import android.view.Menu;
 import android.view.View;
 import android.view.WindowManager;
 
-import com.quascenta.petersroad.HorizontalScrollDatePicker.Ranger;
 import com.quascenta.petersroad.adapters.ExpandableListAdapter;
 import com.quascenta.petersroad.broadway.R;
-import com.quascenta.petersroad.model.device_log;
-import com.quascenta.petersroad.interfaces.IView;
 import com.quascenta.petersroad.fragments.LogFragment;
+import com.quascenta.petersroad.interfaces.IView;
 import com.quascenta.petersroad.interfaces.Presenter;
+import com.quascenta.petersroad.model.device_log;
 import com.quascenta.petersroad.presenters.PresenterImpl;
 
 import java.util.ArrayList;
@@ -38,21 +38,20 @@ import lecho.lib.hellocharts.view.Chart;
 import lecho.lib.hellocharts.view.LineChartView;
 
 public class DetailSensorsActivity extends AppCompatActivity implements ExpandableListAdapter.OnSensorSelected,IView,LogFragment.OnHeadlineSelectedListener {
-    ProgressDialog progressdialog;
-    private LineChartView chart;
-    private LineChartData data;
+    public static final String EXTRA_NAME = "cheese_name";
     private static ArrayList<Line> lines;
+    ProgressDialog progressdialog;
     ArrayList<Line> refinedline;
     Presenter presenter;
     @Bind(R.id.toolbar)
     Toolbar toolbar;
     @Bind(R.id.collapsing_toolbar)
     CollapsingToolbarLayout collapsingToolbar;
-    public static final String EXTRA_NAME = "cheese_name";
+    LogFragment logFragment = new LogFragment();
+    private LineChartView chart;
+    private LineChartData data;
     private boolean hasAxes = true;
     private boolean hasAxesNames = true;
-    LogFragment logFragment = new LogFragment();
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -77,7 +76,7 @@ public class DetailSensorsActivity extends AppCompatActivity implements Expandab
                     .add(R.id.frame_content_list, logFragment, this.toString())
                     .commit();
         }
-        LoadDates();
+        //  LoadDates();
 
 
     }
@@ -90,21 +89,12 @@ public class DetailSensorsActivity extends AppCompatActivity implements Expandab
     }
 
 
-    void LoadDates() {
+    void LoadDates(int day, String month1, int year) {
 
-        Ranger ranger = (Ranger) findViewById(R.id.styled_ranger);
-        ranger.setDayViewOnClickListener(new Ranger.DayViewOnClickListener() {
-            @Override
-            public void onDaySelected(int day, String month, int year) {
-                View parentLayout = findViewById(android.R.id.content);
-                Snackbar.make(parentLayout, "Seleted Date : "+month+ " "+ day, Snackbar.LENGTH_SHORT).show();
-                presenter.onDaySelected(day, month, year);
-                presenter.loadProgressBar(progressdialog);
-
-            }
+        presenter.onDaySelected(day, month1, year);
+        presenter.loadProgressBar(progressdialog);
 
 
-        });
     }
 
     @Override

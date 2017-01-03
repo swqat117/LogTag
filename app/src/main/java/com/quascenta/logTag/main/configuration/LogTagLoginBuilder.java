@@ -14,9 +14,9 @@ import java.util.ArrayList;
 
 public class LogTagLoginBuilder {
 
+    public static LogTagCustomLoginListener logTagCustomLoginListener;
     private Context context;
     private LogTagLoginConfig config;
-    public static LogTagCustomLoginListener logTagCustomLoginListener;
     //private static final String CONFIGDATA = "config";
 
     public LogTagLoginBuilder() {
@@ -26,22 +26,22 @@ public class LogTagLoginBuilder {
         config.setIsGoogleEnabled(false);
     }
 
-    public LogTagLoginBuilder with(Context context){
+    public LogTagLoginBuilder with(Context context) {
         this.context = context;
         return this;
     }
 
-    public LogTagLoginBuilder setAppLogo(int logo){
+    public LogTagLoginBuilder setAppLogo(int logo) {
         config.setAppLogo(logo);
         return this;
     }
 
-    public LogTagLoginBuilder isFacebookLoginEnabled(boolean facebookLogin){
+    public LogTagLoginBuilder isFacebookLoginEnabled(boolean facebookLogin) {
         config.setIsFacebookEnabled(facebookLogin);
         return this;
     }
 
-    public LogTagLoginBuilder isGoogleLoginEnabled(boolean googleLogin){
+    public LogTagLoginBuilder isGoogleLoginEnabled(boolean googleLogin) {
         config.setIsGoogleEnabled(googleLogin);
         return this;
     }
@@ -51,29 +51,27 @@ public class LogTagLoginBuilder {
         return this;
     }
 
-    public LogTagLoginBuilder withFacebookAppId(String appId){
+    public LogTagLoginBuilder withFacebookAppId(String appId) {
         config.setFacebookAppId(appId);
         return this;
     }
 
-    public LogTagLoginBuilder withFacebookPermissions(ArrayList<String> permissions){
+    public LogTagLoginBuilder withFacebookPermissions(ArrayList<String> permissions) {
         config.setFacebookPermissions(permissions);
         return this;
     }
 
-    public LogTagLoginBuilder isCustomLoginEnabled(boolean customlogin, LogTagLoginConfig.LoginType loginType){
+    public LogTagLoginBuilder isCustomLoginEnabled(boolean customlogin, LogTagLoginConfig.LoginType loginType) {
         config.setIsCustomLoginEnabled(customlogin);
         config.setLoginType(loginType);
         return this;
     }
 
-    public Intent build(){
+    public Intent build() {
         Intent intent = new Intent(context, LogTagLoginActivity.class);
         intent.putExtras(config.pack());
         return intent;
     }
-
-
 
 
 }

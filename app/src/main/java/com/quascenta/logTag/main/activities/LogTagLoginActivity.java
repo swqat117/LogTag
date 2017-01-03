@@ -4,15 +4,13 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.AppCompatButton;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -356,6 +354,7 @@ public class LogTagLoginActivity extends AppCompatActivity implements View.OnCli
                         public void onCompleted(JSONObject object, GraphResponse response) {
                             progress.dismiss();
                             UserUtil util = new UserUtil();
+                            System.out.println(object.toString());
                             Facebook_logTagUser facebookUser = util.populateFacebookUser(object);
                             if (facebookUser != null) {
                                 finishLogin(facebookUser);

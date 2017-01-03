@@ -1,8 +1,7 @@
 package com.quascenta.logTag.main;
 
-import android.app.Application;
-
 import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
 import com.quascenta.petersroad.MyApp;
 
 /**
@@ -15,5 +14,6 @@ public class LogTagApplication extends MyApp {
     public void onCreate() {
         super.onCreate();
         FacebookSdk.sdkInitialize(this);
+        AppEventsLogger.activateApp(this);
     }
 }
