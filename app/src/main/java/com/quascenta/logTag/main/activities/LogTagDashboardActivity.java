@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 
+import com.quascenta.QBlueLogger.activities.QppMainActivity;
 import com.quascenta.logTag.main.EventListeners.LogTagCustomLoginListener;
 import com.quascenta.logTag.main.EventListeners.LogTagCustomLogoutListener;
 import com.quascenta.logTag.main.configuration.LogTagLoginBuilder;
@@ -77,7 +78,7 @@ public class LogTagDashboardActivity extends AppCompatActivity implements LogTag
 
         currentUser = Userpreferences.with(getApplicationContext()).getCurrentUser();
         if (Userpreferences.with(getApplicationContext()).contains("user_session_key")) {
-            init();
+            initBluetoothLoggers();
 
         } else {
             loadLogin();
@@ -113,31 +114,14 @@ public class LogTagDashboardActivity extends AppCompatActivity implements LogTag
         startActivity(intent);
         finish();
     }
-        /*Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        final ActionBar ab = getSupportActionBar();
-        ab.setHomeAsUpIndicator(R.drawable.ic_mail_black_24dp);
-        ab.setDisplayHomeAsUpEnabled(true);
 
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        if (navigationView != null) {
-            setupDrawerContent(navigationView);
-        }
-
-        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-        LogTagDashboardActivity.Adapter adapter = new LogTagDashboardActivity.Adapter(getSupportFragmentManager());
-        adapter.addFragment(new CheeseListFragment(), "ALERT TRACKER");
-        adapter.addFragment(new CheeseListFragment(), "REPORT");
-        setTitle("Welcome "+currentUser.getUsername());
-        Log.d(TAG,currentUser.toString());
-        System.out.println(currentUser.toString());
-        viewPager.setAdapter(adapter);
-        tabLayout.setupWithViewPager(viewPager, true);
-*/
-
-
+    void initBluetoothLoggers(){
+        String x = Userpreferences.with(getApplicationContext()).read("user_session_key", "Unavailable");
+        currentUser = Userpreferences.with(getApplicationContext()).readObject("user_session_key");
+        Intent intent = new Intent(this, QppMainActivity.class);
+        startActivity(intent);
+        finish();
+    }
     @Override
     public boolean customSignin(LogTagUser logTagUser) {
         return false;

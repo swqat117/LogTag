@@ -40,13 +40,6 @@ public class MainActivity1 extends AppCompatActivity implements SearchView.OnQue
     private DrawerLayout mDrawerLayout;
 
     //Search View
-    private SearchView searchView;
-    private MenuItem searchMenuItem;
-    private ListView device_list;
-    private DeviceListAdapter deviceListAdapter;
-    private ArrayList<Objectgenerator> device;
-
-    private ArrayList<Objectgenerator> friendList;
 
 
 

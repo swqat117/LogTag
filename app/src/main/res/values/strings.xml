@@ -99,6 +99,41 @@
 
 
 
+    <string name="label_device_name">Device Name:</string>
+
+
+    <string name="label_notified">Data Received : </string>
+    <string name="label_data_received">Data: </string>
+    <string name="label_data_rate">Data Rate: </string>
+    <string name="label_Bps">Bps</string>
+
+    <string name="label_error_data">Error: </string>
+    <string name="label_error_count">Count: </string>
+
+    <string name="text_RxTx_Split">-----------------------------------------</string>
+    <string name="label_data_sent">Data Sent : </string>
+
+    <string name="label_delay">Delay : </string>
+    <string name="bit10">10</string>
+    <string name="text_ms">ms</string>
+    <string name="text_delay_range">(0~9999)</string>
+
+    <string name="label_input">Input:</string>
+
+    <string name="label_hex">0x</string>
+    <string name="label_input_hint">(0~9,A~F)</string>
+
+    <string name="label_send_pkg_repeat">Times:</string>
+
+    <string name="btn_send">Send</string>
+    <string name="btn_stop">Stop</string>
+
+    <string name="text_repeat">Repeat</string>
+
+    <string name="text_counter_def">0</string>
+
+
+
     <string name="hello_world">Hello world!</string>
 
 
@@ -137,6 +172,14 @@
     <string name="password_mismatch">Make sure your passwords match</string>
     <string name="login_failed">Login failed! Try again!</string>
     <string name="user_exists">user exists</string>
+    <string name="refresh">Refresh</string>
+    <string name="qpp_support">Supported</string>
+    <string name="qpp_not_support">Not Supported</string>
+    <string name="title_devices">Logger</string>
+    <string name="title_activity_qpp">BLoggers</string>
+
+    <string name="label_version">Version No</string>
+    <string name="scan">Scan</string>
 
 
 </resources>
