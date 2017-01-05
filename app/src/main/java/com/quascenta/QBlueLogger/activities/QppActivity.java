@@ -1,9 +1,5 @@
 package com.quascenta.QBlueLogger.activities;
 
-/**
- * Created by AKSHAY on 1/4/2017.
- */
-
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -29,33 +25,29 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.quascenta.QBlueLogger.QppApi;
 import com.quascenta.logTag.main.utils.HexBytesUtils;
 import com.quascenta.petersroad.broadway.R;
-
+import com.quintic.libqpp.QppApi;
+import com.quintic.libqpp.iQppCallback;
 
 public class QppActivity extends Activity {
     protected static final String TAG = QppActivity.class.getSimpleName();
-    private BluetoothManager mBluetoothManager = null;
-    private static BluetoothAdapter mBluetoothAdapter = null;
-    public static BluetoothGatt mBluetoothGatt = null;
-
+    private BluetoothManager mBluetoothManager=null;
+    private static BluetoothAdapter mBluetoothAdapter=null;
+    public static BluetoothGatt mBluetoothGatt=null;
+    byte[] qppSend;
     public static final String EXTRAS_DEVICE_NAME = "deviceName";
     public static final String EXTRAS_DEVICE_ADDRESS = "deviceAddress";
 
-    private boolean dataRecvFlag = false;
+    private boolean dataRecvFlag=false;
     private String deviceName;
     private String deviceAddress;
 
-    /**
-     * connection state
-     */
+    /** connection state */
     private boolean mConnected = false;
-    /**
-     * scan all Service ?
-     */
+    /** scan all Service ?*/
     private boolean isInitialize = false;
-    private static final int MAX_DATA_SIZE = 40;
+    private static final int MAX_DATA_SIZE=40;
     /// public
     private TextView textDeviceName;
     private TextView textDeviceAddress;
@@ -72,15 +64,14 @@ public class QppActivity extends Activity {
     private TextView textQppDataRate;
 
     private long qppSumDataReceived = 0;   /// summary of data received.
-    private long qppRecvDataTime = 0;
+    private long qppRecvDataTime=0;
     /// send
     private EditText editSend;
     private Button btnQppTextSend;
 
     /// repeat start
     private CheckBox checkboxRepeat;
-    private boolean
-            qppSendDataState = false;
+    private boolean qppSendDataState = false;
 
     private TextView labelRepeatCounter;
     private TextView textRepeatCounter;
@@ -88,8 +79,8 @@ public class QppActivity extends Activity {
     private long qppRepeatCounter = 0;
     /// repeat end
 
-    private byte qppDataSend[] = {0x00, '1', '2', '3', '4', '5', '6', '7',
-            '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 0x10, 0x11, 0x12, 0x13};
+    private byte qppDataSend[] = {0x00,'1', '2','3', '4','5','6', '7',
+            '8','9', 'a', 'b', 'c','d','e', 'f', 0x10,0x11,0x12,0x13};
 
     private boolean initialize() {
         // For API level 18 and above, get a reference to BluetoothAdapter through BluetoothManager.
@@ -107,49 +98,47 @@ public class QppActivity extends Activity {
         }
         return true;
     }
-
-    private Handler handlersend = new Handler();
-    final Runnable runnableSend = new Runnable() {
+    private Handler handlersend = new Handler( );
+    final Runnable runnableSend = new Runnable( ) {
         private void QppSendNextData() {
             qppDataSend[0]++;
 
-            if (!QppApi.qppSendData(mBluetoothGatt, qppDataSend)) {
-                Log.e(TAG, "send data failed");
+            if(!QppApi.qppSendData(mBluetoothGatt, qppSend))
+            {
+                Log.e(TAG,"send data failed");
                 return;
             }
 
             qppRepeatCounter++;
-            setRepeatCounter(" " + qppRepeatCounter);
+            setRepeatCounter(" "+qppRepeatCounter);
         }
-
-        public void run() {
+        public void run ( ) {
             QppSendNextData();
         }
     };
-
-    private void clearHandler(Handler handler, Runnable runner) {
-        if (handler != null) {
+    private void clearHandler(Handler handler,Runnable runner)
+    {
+        if(handler!=null){
             handler.removeCallbacks(runner);
-            handler = null;
+            handler=null;
         }
     }
-
-    private final BluetoothGattCallback mGattCallback = new BluetoothGattCallback() {
+    private final BluetoothGattCallback mGattCallback = new BluetoothGattCallback(){
         @Override
-        public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
-            Log.i(TAG, "onConnectionStateChange : " + status + "  newState : " + newState);
-            if (newState == BluetoothProfile.STATE_CONNECTED) {
+        public void onConnectionStateChange(BluetoothGatt gatt, int status,int newState) {
+            Log.i(TAG, "onConnectionStateChange : "+status+"  newState : "+newState);
+            if(newState == BluetoothProfile.STATE_CONNECTED){
                 mBluetoothGatt.discoverServices();
                 mConnected = true;
-            } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+            }else if(newState== BluetoothProfile.STATE_DISCONNECTED){
 
                 mConnected = false;
-                clearHandler(handlerQppDataRate, runnableQppDataRate);
-                clearHandler(handlersend, runnableSend);
-                dataRecvFlag = false;
-                if (qppSendDataState) {
+                clearHandler(handlerQppDataRate,runnableQppDataRate);
+                clearHandler(handlersend,runnableSend);
+                dataRecvFlag=false;
+                if(qppSendDataState){
                     setBtnSendState("Send");
-                    qppSendDataState = false;
+                    qppSendDataState=false;
                 }
                 close();
             }
@@ -158,10 +147,10 @@ public class QppActivity extends Activity {
 
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
-            if (QppApi.qppEnable(mBluetoothGatt, uuidQppService, uuidQppCharWrite)) {
+            if(QppApi.qppEnable(mBluetoothGatt, uuidQppService, uuidQppCharWrite)){
                 isInitialize = true;
                 setConnectState(R.string.qpp_support);
-            } else {
+            }else{
                 isInitialize = false;
                 setConnectState(R.string.qpp_not_support);
             }
@@ -173,28 +162,31 @@ public class QppActivity extends Activity {
         }
 
         @Override
-        public void onDescriptorWrite(BluetoothGatt gatt, BluetoothGattDescriptor descriptor, int status) {
+        public void onDescriptorWrite(BluetoothGatt gatt,BluetoothGattDescriptor descriptor, int status) {
             //super.onDescriptorWrite(gatt, descriptor, status);
-            Log.w(TAG, "onDescriptorWrite");
+            Log.w(TAG,"onDescriptorWrite");
             QppApi.setQppNextNotify(gatt, true);
         }
 
         @Override
-        public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+        public void onCharacteristicWrite(BluetoothGatt gatt,BluetoothGattCharacteristic characteristic, int status) {
             //super.onCharacteristicWrite(gatt, characteristic, status);
 
-            if (status == BluetoothGatt.GATT_SUCCESS && qppSendDataState) {
-			/*This is a workaround,20140819,xiesc: it paused with unknown reason on android 4.4.3
+            if(status == BluetoothGatt.GATT_SUCCESS && qppSendDataState)
+            {
+			/*This is a workaround,20140819,xc: it paused with unknown reason on android 4.4.3
 			 */
 
-                    handlersend.postDelayed(runnableSend, 60);
-                 // handlersend.post(runnableSend);
-            } else {
-                Log.e(TAG, "Send failed!!!!");
+                if(handlersend!=null)
+                    handlersend.postDelayed(runnableSend,60);
+
+                //handlersend.post(runnableSend);
+            }else
+            {
+                Log.e(TAG,"Send failed!!!!");
             }
         }
     };
-
     public boolean connect(final String address) {
         if (mBluetoothAdapter == null || address == null) {
             Log.w("Qn Dbg", "BluetoothAdapter not initialized or unspecified address.");
@@ -211,7 +203,6 @@ public class QppActivity extends Activity {
         Log.d(TAG, "Trying to create a new connection. Gatt: " + mBluetoothGatt);
         return true;
     }
-
     public void disconnect() {
         if (mBluetoothAdapter == null || mBluetoothGatt == null) {
             Log.w("Qn Dbg", "BluetoothAdapter not initialized");
@@ -228,13 +219,13 @@ public class QppActivity extends Activity {
     }
 
 
-    final Handler handlerQppDataRate = new Handler();
-    final Runnable runnableQppDataRate = new Runnable() {
-        public void run() {
+    final Handler handlerQppDataRate = new Handler( );
+    final Runnable runnableQppDataRate = new Runnable( ) {
+        public void run ( ) {
             qppRecvDataTime++;
-            textQppDataRate.setText(" " + qppSumDataReceived / qppRecvDataTime + " Bps");
+            textQppDataRate.setText(" "+qppSumDataReceived/qppRecvDataTime+" Bps");
 
-            dataRecvFlag = false;
+            dataRecvFlag=false;
         }
     };
 
@@ -255,7 +246,6 @@ public class QppActivity extends Activity {
             }
         });
     }
-
     private void setRepeatCounter(final String errStr) {
         runOnUiThread(new Runnable() {
             @Override
@@ -264,36 +254,29 @@ public class QppActivity extends Activity {
             }
         });
     }
-
     private void setBtnSendState(final String str) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                btnQppTextSend.setText(str);
-            }
-        });
+        runOnUiThread(() -> btnQppTextSend.setText(str));
     }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.qppbluetooth_activity_qpp);
+        setContentView(R.layout.activity_qpp);
 
 
-        textDeviceName = (TextView) findViewById(R.id.text_device_name);
-        textDeviceAddress = (TextView) findViewById(R.id.text_device_address);
-        textConnectionStatus = (TextView) findViewById(R.id.text_connection_state);
-        editSend = (EditText) findViewById(R.id.edit_send);
+        textDeviceName = (TextView)findViewById(R.id.text_device_name);
+        textDeviceAddress = (TextView)findViewById(R.id.text_device_address);
+        textConnectionStatus = (TextView)findViewById(R.id.text_connection_state);
+        editSend = (EditText)findViewById(R.id.edit_send);
         editSend.setFilters(new InputFilter[]{new InputFilter.LengthFilter(MAX_DATA_SIZE)});
-        btnQppTextSend = (Button) findViewById(R.id.btn_qpp_text_send);
-        checkboxRepeat = (CheckBox) findViewById(R.id.cb_repeat);
-        labelRepeatCounter = (TextView) findViewById(R.id.label_repeat_counter);
-        textRepeatCounter = (TextView) findViewById(R.id.text_repeat_counter);
-        textQppNotify = (TextView) findViewById(R.id.text_qpp_notify);
-        textQppDataRate = (TextView) findViewById(R.id.text_qpp_data_rate);
+        btnQppTextSend = (Button)findViewById(R.id.btn_qpp_text_send);
+        checkboxRepeat = (CheckBox)findViewById(R.id.cb_repeat);
+        labelRepeatCounter = (TextView)findViewById(R.id.label_repeat_counter);
+        textRepeatCounter = (TextView)findViewById(R.id.text_repeat_counter);
+        textQppNotify = (TextView)findViewById(R.id.text_qpp_notify);
+        textQppDataRate = (TextView)findViewById(R.id.text_qpp_data_rate);
 
         deviceName = getIntent().getExtras().getString(EXTRAS_DEVICE_NAME);
-        deviceAddress = getIntent().getExtras().getString(EXTRAS_DEVICE_ADDRESS);
+        deviceAddress =getIntent().getExtras().getString(EXTRAS_DEVICE_ADDRESS);
 
         textDeviceName.setText(deviceName);
         textDeviceAddress.setText(deviceAddress);
@@ -303,39 +286,53 @@ public class QppActivity extends Activity {
             finish();
         }
 
-        QppApi.setCallBack((mBluetoothGatt1, qppUUIDForNotifyChar, qppData) -> {
-            if (!dataRecvFlag) {
-                handlerQppDataRate.postDelayed(runnableQppDataRate, 1000);
-                dataRecvFlag = true;
+        QppApi.setCallback(new iQppCallback(){
+
+            @Override
+            public void onQppEnableConfirm(boolean b) {
+
             }
-            qppSumDataReceived = qppSumDataReceived + qppData.length;
-            setQppNotify(qppData[0] + " " + (byte) qppData[1]);
+
+            @Override
+            public void onQppReceiveData(BluetoothGatt mBluetoothGatt, String qppUUIDForNotifyChar, byte[] qppData) {
+                if(!dataRecvFlag){
+                    handlerQppDataRate.postDelayed(runnableQppDataRate,1000);
+                    dataRecvFlag=true;
+                }
+                qppSumDataReceived=qppSumDataReceived+qppData.length;
+                setQppNotify((byte)qppData[0]+" "+(byte)qppData[1]);
+            }
+
+            @Override
+            public void onQppUpdateNotifiedState(int i) {
+
+            }
         });
 
         /**
          * start to send qpp package OR RESET...
          */
-        btnQppTextSend.setOnClickListener(new OnClickListener() {
+        btnQppTextSend.setOnClickListener(new OnClickListener(){
             @Override
             public void onClick(View arg0) {
-                if (!mConnected || !isInitialize) {
+                if(!mConnected || !isInitialize){
                     Toast.makeText(QppActivity.this, "Please connect device first and ensure your device support Qpp service!", Toast.LENGTH_SHORT).show();
-                    return;
+                    return ;
                 }
-
-                if (checkboxRepeat.isChecked()) {
-                    if (!qppSendDataState) {
-                        btnQppTextSend.setText("Stop");
+                qppSend = new byte[20];
+                qppSend = packageDataSend();
+                if(checkboxRepeat.isChecked()){
+                    if(!qppSendDataState){
                         qppRepeatCounter = 0;
                         qppSendDataState = true;
-
+                        btnQppTextSend.setText("Stop");
                         handlersend.post(runnableSend);
-                    } else {
+                    }else{
                         qppSendDataState = false;
                         btnQppTextSend.setText("Send");
                     }
-                } else {
-                    //handlersend.post(runnableSend);
+                }else{
+                    handlersend.post(runnableSend);
                 }
             }
 
@@ -343,26 +340,25 @@ public class QppActivity extends Activity {
                 int data_sent_lenth = editSend.getText().length();
                 String strInput;
 
-                strInput = editSend.getText().toString();
-                if ((data_sent_lenth % 2) == 1) {
-                    strInput = "0" + strInput;
+                strInput =  editSend.getText().toString();
+                if((data_sent_lenth % 2) == 1){
+                    strInput = "0"+strInput;
                 }
-                return HexBytesUtils.hexStr2Bytes(strInput);
+                return	HexBytesUtils.hexStr2Bytes(strInput);
             }
         });
 
-        checkboxRepeat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        checkboxRepeat.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
+            public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
+                if(isChecked){
                     labelRepeatCounter.setVisibility(View.VISIBLE);
                     textRepeatCounter.setVisibility(View.VISIBLE);
-                } else {
+                }else{
                     labelRepeatCounter.setVisibility(View.INVISIBLE);
                     textRepeatCounter.setVisibility(View.INVISIBLE);
                 }
-            }
-        });
+            }});
     }
 
     @Override
@@ -396,12 +392,12 @@ public class QppActivity extends Activity {
 
         return super.onOptionsItemSelected(item);
     }
-
     @Override
     protected void onResume() {
         super.onResume();
 
-        if (!mConnected) {
+        if(!mConnected)
+        {
             textConnectionStatus.setText(R.string.qpp_not_support);
             invalidateOptionsMenu();
             connect(deviceAddress);
@@ -416,8 +412,8 @@ public class QppActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        clearHandler(handlerQppDataRate, runnableQppDataRate);
-        clearHandler(handlersend, runnableSend);
+        clearHandler(handlerQppDataRate,runnableQppDataRate);
+        clearHandler(handlersend,runnableSend);
         close();
     }
 }
