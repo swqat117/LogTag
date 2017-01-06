@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="title_new_devices" type="id">New Devices:</item>
+    <item name="title_dialog" type="id">Btdetector</item>
+</resources>

@@ -180,6 +180,17 @@
 
     <string name="label_version">Version No</string>
     <string name="scan">Scan</string>
+    <string name="text_trans_format">Translate</string>
+    <string name="scanning">Scanning...</string>
+    <string name="select_device">Select a device</string>
+    <string name="start_scanning">Start Scan</string>
+    <string name="connect_timeout">connection timed out</string>
+    <string name="btn_sure">OK</string>
+    <string name="btn_cancel">Cancel</string>
+    <string name="ask_permission">Permissions</string>
+    <string name="lined_num">Lined Num</string>
+    <string name="line_success">Successful</string>
+    <string name="line_disconnect">Disconnected</string>
 
 
 </resources>
