@@ -206,7 +206,7 @@ public class QppActivity extends Activity{
         }
         /**
          *Desc:
-         *  通过onConnectionStateChange调用OnServiceDiscovered,来发现服务
+         *  onConnectionStateChange OnServiceDiscovered,
          */
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {

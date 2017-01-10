@@ -9,6 +9,7 @@ import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -16,6 +17,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
@@ -27,7 +29,7 @@ import com.quascenta.petersroad.broadway.R;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.concurrent.ForkJoinPool;
 
 
 @SuppressLint("NewApi")
@@ -39,7 +41,7 @@ public class DeviceControlActivity extends Activity {
     public static final String EXTRAS_DEVICE_ADDRESS = "DEVICE_ADDRESS";
 
     private TextView mConnectionState;
-    private TextView mDataField;
+    private EditText mDataField;
     private String mDeviceName;
     private String mDeviceAddress;
     private ExpandableListView mGattServicesList;
@@ -83,12 +85,13 @@ public class DeviceControlActivity extends Activity {
     // or notification operations.
 
 
-/* private final BroadcastReceiver mGattUpdateReceiver = new BroadcastReceiver() {
+private final BroadcastReceiver mGattUpdateReceiver = new BroadcastReceiver() {
       @Override
         public void onReceive(Context context, Intent intent) {
            final String action = intent.getAction();
+          System.out.println("ACTION "+action);
            if (BluetoothLeService.ACTION_GATT_CONNECTED.equals(action)) {
-              mConnected = true;                updateConnectionState(R.string.connected);
+              mConnected = true;updateConnectionState(R.string.connected);
               invalidateOptionsMenu();
           } else if (BluetoothLeService.ACTION_GATT_DISCONNECTED.equals(action)) {
                mConnected = false;
@@ -96,12 +99,12 @@ public class DeviceControlActivity extends Activity {
                invalidateOptionsMenu();
                clearUI();
            } else if (BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
-                displayGattServices(mBluetoothLeService.getSupportedGattServices());//暂时注释
+                displayGattServices(mBluetoothLeService.getSupportedGattServices(mDeviceAddress));//
           } else if (BluetoothLeService.ACTION_DATA_AVAILABLE.equals(action)) {
                 displayData(intent.getStringExtra(BluetoothLeService.EXTRA_DATA));
            }
       }
-   };*/
+   };
 
     private void clearUI() {
         mGattServicesList.setAdapter((SimpleExpandableListAdapter) null);
@@ -121,8 +124,8 @@ public class DeviceControlActivity extends Activity {
         // Sets up UI references.
         ((TextView) findViewById(R.id.device_address)).setText(mDeviceAddress);
         mConnectionState = (TextView) findViewById(R.id.connection_state);
-        mDataField = (TextView) findViewById(R.id.data_value);
-
+        mDataField = (EditText) findViewById(R.id.data_value);
+        registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
 
         Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
         boolean bll = bindService(gattServiceIntent, mServiceConnection,
@@ -136,8 +139,9 @@ public class DeviceControlActivity extends Activity {
         findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String s = BodyCHOLRead(sb.toString());
-                Log.d(TAG, "onClick:"+s);
+             gattServiceIntent.putExtra("value",mDataField.getText().toString());
+             gattServiceIntent.putExtra("QPPSENDDATA_STATE",true);
+               startService(gattServiceIntent);
             }
         });
     }
@@ -145,17 +149,17 @@ public class DeviceControlActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
-//        registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
+        registerReceiver(mGattUpdateReceiver, makeGattUpdateIntentFilter());
         if (mBluetoothLeService != null) {
-//            final boolean result = mBluetoothLeService.connect(mDeviceAddress);
-//            Log.d(TAG, "Connect request result=" + result);
+            final boolean result = mBluetoothLeService.connect(mDeviceAddress);
+            Log.d(TAG, "Connect request result=" + result);
         }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-//        unregisterReceiver(mGattUpdateReceiver);
+        unregisterReceiver(mGattUpdateReceiver);
     }
 
     @Override
@@ -182,10 +186,10 @@ public class DeviceControlActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_connect:
-//                mBluetoothLeService.connect(mDeviceAddress);
+              mBluetoothLeService.connect(mDeviceAddress);
                 return true;
             case R.id.menu_disconnect:
-//                mBluetoothLeService.disconnect();//暂时注释
+              mBluetoothLeService.disconnect(mDeviceAddress);//
                 return true;
             case android.R.id.home:
                 onBackPressed();
@@ -226,8 +230,9 @@ public class DeviceControlActivity extends Activity {
                 uuid = gattCharacteristic.getUuid().toString();
                 if (uuid.contains("fff4")) {
                     Log.e("console", "2gatt Characteristic: " + uuid);
-//                    mBluetoothLeService.setCharacteristicNotification(gattCharacteristic, true);//暂时注释
-//                    mBluetoothLeService.readCharacteristic(gattCharacteristic);//暂时注释
+                    mBluetoothLeService.setCharacteristicNotification(uuid, gattCharacteristic,true);
+                    mBluetoothLeService.readCharacteristic(uuid, gattCharacteristic);//
+
                 }
             }
         }
@@ -237,19 +242,18 @@ public class DeviceControlActivity extends Activity {
      *
      * @return
      */
-//    private static IntentFilter makeGattUpdateIntentFilter() {
-//        final IntentFilter intentFilter = new IntentFilter();
-//        intentFilter.addAction(BluetoothLeService.ACTION_GATT_CONNECTED);
-//        intentFilter.addAction(BluetoothLeService.ACTION_GATT_DISCONNECTED);
-//        intentFilter
-//                .addAction(BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED);
-//        intentFilter.addAction(BluetoothLeService.ACTION_DATA_AVAILABLE);
-//        intentFilter.addAction(BluetoothLeService.EXTRA_DATA);
-//        return intentFilter;
-//    }
+    private static IntentFilter makeGattUpdateIntentFilter() {
+        final IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(BluetoothLeService.ACTION_GATT_CONNECTED);
+        intentFilter.addAction(BluetoothLeService.ACTION_GATT_DISCONNECTED);
+        intentFilter.addAction(BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED);
+        intentFilter.addAction(BluetoothLeService.ACTION_DATA_AVAILABLE);
+        intentFilter.addAction(BluetoothLeService.EXTRA_DATA);
+       return intentFilter;
+   }
 
     /**
-     * 将16进制 转换成10进制
+     *
      *
      * @param str
      * @return
@@ -266,7 +270,7 @@ public class DeviceControlActivity extends Activity {
     }
 
     /**
-     * byte转16进制
+     *
      *
      * @param b
      * @return
@@ -285,12 +289,12 @@ public class DeviceControlActivity extends Activity {
 
 
     /**
-     * 分析胆固醇数据
+     *
      * @param data
      * @return
      */
     public static String BodyCHOLRead(String data) {
-        // 根据换行符分割
+
         String[] datas = data.split(print10("0A"));
         for (int i = 0 ; i < datas.length; i ++) {
             Log.d(TAG, String.format("split[%s]:%s",i, datas[i]));
@@ -305,7 +309,7 @@ public class DeviceControlActivity extends Activity {
         for (int i = 7,j = 0; i < 11 ; i ++,j ++) {
             String values = datas[i].split("\"")[1].split(":")[1].trim();//207 mg/dL
             String[] results = values.split(" +");
-            System.out.println("值~~~~~" + values + "分割长度:" + results.length);
+            System.out.println("~~~~~" + values + ":" + results.length);
             String value = "----";
 
             if(results.length == 3){
@@ -327,7 +331,7 @@ public class DeviceControlActivity extends Activity {
                 sbr.append(value).append(",");
             }
         }
-        Log.d(TAG, "血脂4项测量结果:" +  sbr);
+        Log.d(TAG, ":" +  sbr);
         return sbr.substring(0, sbr.length() - 1);
     }
 
@@ -335,8 +339,7 @@ public class DeviceControlActivity extends Activity {
         double value = Double.parseDouble(input);
         NumberFormat df = NumberFormat.getNumberInstance();
         df.setMaximumFractionDigits(2);
-        //*胆固醇、高密度脂蛋白、低密度脂蛋白的换算都一样：1mmol/L=38.7mg/dL；
-        //*甘油三脂是1mmol/L=88.6mg/dL
+
 
         if(type == 0){
             return df.format(value / 38.7);

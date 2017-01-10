@@ -10,7 +10,7 @@ import java.util.List;
 
 
 /**
- * Created by admin on 2016/11/26.
+ *
  * If you need to set the Bluetooth object more properties and behavior can be inherited from the class     such as extends BleDevice
  */
 
@@ -30,7 +30,7 @@ public class BleDevice {
     private String mBleName;
     //Bluetooth modified name
     private String mBleAlias;
-    private List<BleDevice>mConnectedDevices = new ArrayList<>();
+    private List<BleDevice> mConnectedDevices = new ArrayList<>();
 
 
     public BleDevice(BluetoothDevice device) {

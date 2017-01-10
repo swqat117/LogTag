@@ -14,6 +14,7 @@ import android.bluetooth.BluetoothProfile;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
@@ -21,6 +22,8 @@ import android.widget.Toast;
 
 
 import com.quascenta.BluetoothLoggingDevice.BleVO.BleDevice;
+import com.quascenta.QBlueLogger.api.QppApi;
+import com.quascenta.QBlueLogger.api.iQppCallback;
 import com.quascenta.petersroad.broadway.R;
 
 import java.util.ArrayList;
@@ -30,7 +33,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-
+import static com.quascenta.BluetoothLoggingDevice.activity.DeviceControlActivity.mBluetoothGatt;
+import static com.quascenta.petersroad.broadway.R.id.status;
 
 
 @SuppressLint("NewApi")
@@ -38,21 +42,66 @@ import java.util.UUID;
 public class BluetoothLeService extends Service {
 
     private final static String TAG = BluetoothLeService.class.getSimpleName();
-
+    public static final String ACTION_GATT_CONNECTED = "1" ;
+    public static final String ACTION_GATT_DISCONNECTED ="0" ;
+    public static final String ACTION_GATT_SERVICES_DISCOVERED = "2";
+    public static final String ACTION_GATT_DATA_AVAILABLE = "3";
+    public static final String ACTION_DATA_AVAILABLE = "3";
+    public static String EXTRA_DATA = "extra_data";
+    boolean isInitialize;
     private Handler mHandler;
     private BluetoothManager mBluetoothManager;
     private BluetoothAdapter mBluetoothAdapter;
+    protected static String uuidQppService = "0000fee9-0000-1000-8000-00805f9b34fb";
+    protected static String uuidQppCharWrite = "d44bc439-abfd-45a2-b575-925416129600";
     //public
     public boolean mScanning;
-
+    private String x1;
     private ArrayList<BluetoothDevice> mScanDevices = new ArrayList<>();
     private ArrayList<BluetoothDevice> mConnectedDevices = new ArrayList<>();
     //Multiple device connections must put the gatt object in the collection
     private Map<String, BluetoothGatt> mBluetoothGattMap;
     //The address of the connected device
     private List<String> mConnectedAddressList;
+    private Boolean qppSendDataState = true;
+    private String data = null;
 
-    private Runnable mConnectTimeout = new Runnable() { // 连接设备超时
+    private Handler handlerSend = new Handler();
+    final Runnable runnableSend = new Runnable() {
+
+
+        private void QppSendNextData(String address) {
+            byte[] qppDataSend1 = null;
+            try {
+                qppDataSend1 = x1.getBytes();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            if (!QppApi.chenkInputString(qppDataSend1)) {
+                Log.e(TAG, "--> qppDataSend1 = input string is illegal!");
+                return;
+            }
+
+            if (qppDataSend1 == null) {
+                Log.e(TAG, "--> qppDataSend1 = null!");
+                return;
+            }
+
+            if (!QppApi.qppSendData(mBluetoothGattMap.get(address), qppDataSend1)) {
+                Log.e(TAG, "--> Send data failed");
+            }
+
+
+
+        }
+        public void run() {
+            QppSendNextData(x1);
+        }
+    };
+
+
+    private Runnable mConnectTimeout = new Runnable() { //
         @Override
         public void run() {
             Toast.makeText(getApplication(), R.string.connect_timeout,Toast.LENGTH_SHORT).show();
@@ -96,6 +145,14 @@ public class BluetoothLeService extends Service {
             } else {
                 Log.w(TAG, "onServicesDiscovered received: " + status);
             }
+
+            if (QppApi.qppEnable(gatt, uuidQppService, uuidQppCharWrite)) {
+                isInitialize = true;
+          //      setConnectState(R.string.qpp_support);
+            }else {
+                isInitialize = false;
+          //      setConnectState(R.string.qpp_not_support);
+            }
         }
 
         @Override
@@ -107,11 +164,28 @@ public class BluetoothLeService extends Service {
             }
         }
 
+
+
         @Override
-        public void onCharacteristicWrite(BluetoothGatt gatt,
-                                          BluetoothGattCharacteristic characteristic, int status) {
+        public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+
+            String x = null;
             System.out.println("--------write success----- status:" + status);
             mBleLisenter.onWrite(gatt,characteristic,status);
+            if (status == BluetoothGatt.GATT_SUCCESS && qppSendDataState) {
+                QppApi.qppSendData(gatt,x1.getBytes());
+                if (handlerSend != null && runnableSend != null) {
+                    QppApi.qppSendData(gatt,x.getBytes());
+                    Log.i(TAG, "--> A GATT Characteristic Continuous Write operation completed successfully");
+                }
+            }else if (status == BluetoothGatt.GATT_SUCCESS) {
+                QppApi.qppSendData(gatt,x1.getBytes());
+                Log.i(TAG, "--> A GATT Characteristic Write operation completed successfully");
+            }else if (status == BluetoothGatt.GATT_FAILURE) {
+                Log.i(TAG, "--> A GATT Characteristic Write operation completed is failure");
+            }
+
+
         }
 
 
@@ -122,7 +196,9 @@ public class BluetoothLeService extends Service {
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt,
                                             BluetoothGattCharacteristic characteristic) {
+            QppApi.updateValueForNotifition(gatt, characteristic);
             mBleLisenter.onChanged(gatt, characteristic);
+
         }
 
         @Override
@@ -131,7 +207,9 @@ public class BluetoothLeService extends Service {
             UUID uuid = descriptor.getCharacteristic().getUuid();
             Log.w(TAG,"onDescriptorWrite");
             Log.e(TAG,"descriptor_uuid:"+uuid);
+            QppApi.setQppNextNotify(gatt, true);
             mBleLisenter.onDescriptorWriter(gatt);
+
         }
 
         @Override
@@ -150,10 +228,28 @@ public class BluetoothLeService extends Service {
     };
 
     @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+
+        x1 = intent.getStringExtra("value");
+        return super.onStartCommand(intent, flags, startId);
+
+
+    }
+
+    @Override
     public void onCreate() {
         super.onCreate();
         mHandler = new Handler();
-    }
+
+        QppApi.setCallback(new iQppCallback() {
+
+           @Override
+            public void onQppReceiveData(BluetoothGatt mBluetoothGatt, String qppUUIDForNotifyChar, byte[] qppData) {
+               data = new String(qppData);
+
+        }
+
+        });}
 
     /**
      * Starts scanning or stops scanning the device
@@ -266,6 +362,7 @@ public class BluetoothLeService extends Service {
      * @return  Whether connect is successful
      */
     public boolean connect(final String address) {
+        x1 = address;
         if (mConnectedAddressList == null) {
             mConnectedAddressList = new ArrayList<>();
         }
@@ -296,7 +393,7 @@ public class BluetoothLeService extends Service {
         final BluetoothDevice device = mBluetoothAdapter
                 .getRemoteDevice(address);
         if (device == null) {
-            Log.d(TAG, "没有设备");
+            Log.d(TAG, "No device available");
             return false;
         }
         // We want to directly connect to the device, so we are setting the
@@ -368,6 +465,12 @@ public class BluetoothLeService extends Service {
 
     }
 
+
+
+
+
+
+
     /**
      * Request a read on a given {@code BluetoothGattCharacteristic}. The read
      * result is reported asynchronously through the
@@ -379,7 +482,7 @@ public class BluetoothLeService extends Service {
     public void readCharacteristic(String address, BluetoothGattCharacteristic characteristic) {
         Log.d(TAG, "readCharacteristic: " + characteristic.getProperties());
         if (mBluetoothAdapter == null || mBluetoothGattMap.get(address) == null) {
-            Log.d(TAG, "BluetoothAdapter为空");
+            Log.d(TAG, "BluetoothAdapter");
             return;
         }
         mBluetoothGattMap.get(address).readCharacteristic(characteristic);
@@ -394,7 +497,7 @@ public class BluetoothLeService extends Service {
     public void setCharacteristicNotification(String address,
                                               BluetoothGattCharacteristic characteristic, boolean enabled) {
         if (mBluetoothAdapter == null || mBluetoothGattMap.get(address) == null) {
-            Log.d(TAG, "BluetoothAdapter为空");
+            Log.d(TAG, "BluetoothAdapter");
             return;
         }
         mBluetoothGattMap.get(address).setCharacteristicNotification(characteristic, enabled);

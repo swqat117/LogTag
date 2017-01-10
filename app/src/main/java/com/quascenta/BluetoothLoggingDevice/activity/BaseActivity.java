@@ -1,19 +1,13 @@
 package com.quascenta.BluetoothLoggingDevice.activity;
 
 import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.SparseArray;
-import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 
 import com.quascenta.petersroad.broadway.R;
 
@@ -31,8 +25,8 @@ public class BaseActivity extends Activity {
         super.setContentView(layoutResID);
     }
 
-    private int                   mPermissionIdx = 0x10;//请求权限索引
-    private SparseArray<GrantedResult> mPermissions   = new SparseArray<>();//请求权限运行列表
+    private int                   mPermissionIdx = 0x10;
+    private SparseArray<GrantedResult> mPermissions   = new SparseArray<>();
 
     @SuppressLint("Override")
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -52,16 +46,14 @@ public class BaseActivity extends Activity {
         }
         runnable.mGranted = false;
         if (Build.VERSION.SDK_INT < 23 || permissions == null || permissions.length == 0) {
-            runnable.mGranted = true;//新添加
+            runnable.mGranted = true;
             runOnUiThread(runnable);
             return;
         }
         final int requestCode = mPermissionIdx++;
         mPermissions.put(requestCode, runnable);
 
-		/*
-			是否需要请求权限
-		 */
+
         boolean granted = true;
         for (String permission : permissions) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -75,9 +67,7 @@ public class BaseActivity extends Activity {
             return;
         }
 
-		/*
-			是否需要请求弹出窗
-		 */
+
         boolean request = true;
         for (String permission : permissions) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

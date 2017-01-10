@@ -116,8 +116,7 @@ public class QppApi  {
     }
 
     /**
-     * @author LucianQu
-     * created at 2016/8/5 17:19
+     *
      */
     private static boolean setCharacteristicNotification(BluetoothGatt bluetoothGatt
             , BluetoothGattCharacteristic characteristic, boolean enabled) {
@@ -142,8 +141,7 @@ public class QppApi  {
     }
 
     /**
-     * Created at : 2016/8/6 18:46
-     * Description: 删除空格
+     *
      */
     private static byte[] deleteSpace(byte[] bytes) {
         byte[] mbytes = null;
@@ -178,7 +176,7 @@ public class QppApi  {
 
     /**
      * Created at : 2016/8/6 18:43
-     * Description: 检查输入字节数组
+     * Description:
      */
     public static boolean chenkInputString(byte[] bytes) {
         int i = 0;

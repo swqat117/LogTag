@@ -109,6 +109,7 @@ public class MainActivity extends BaseActivity {
                                         if (device.getBleAddress().equals(mLeDeviceListAdapter.getDevice(i).getBleAddress())) {
                                             if (device.isConnected()) {
                                                 mLeDeviceListAdapter.getDevice(i).setConnected(true);
+
                                                 Toast.makeText(MainActivity.this, R.string.line_success, Toast.LENGTH_SHORT).show();
 
                                             } else {
@@ -140,7 +141,6 @@ public class MainActivity extends BaseActivity {
 
                         @Override
                         public void onWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
-
                         }
 
                         @Override
@@ -157,7 +157,7 @@ public class MainActivity extends BaseActivity {
                          QppApi.setQppNextNotify(gatt, true);
                         }
                     });
-                    //开始扫描  如果想更改扫描时间   则修改BleConfig中的SCAN_PERIOD = 10000;//默认扫描时间
+
                     mBluetoothLeService.scanLeDevice(true);
                     break;
             }
@@ -183,8 +183,7 @@ public class MainActivity extends BaseActivity {
         return bytes;
     }
 
-    private BluetoothGattCharacteristic mWriteCharacteristic;//ble发送对象
-
+    private BluetoothGattCharacteristic mWriteCharacteristic;
     private void displayGattServices(String address, List<BluetoothGattService> gattServices) {
         if (gattServices == null)
             return;
@@ -203,7 +202,7 @@ public class MainActivity extends BaseActivity {
                     if (uuid.equals(BleConfig.UUID_NOTIFY_TEXT)) {
                         Log.e("console", "2gatt Characteristic: " + uuid);
                         mBluetoothLeService.setCharacteristicNotification(address,gattCharacteristic, true);//
-//                        mBluetoothLeService.readCharacteristic(address,gattCharacteristic);//暂时注释
+//                        mBluetoothLeService.readCharacteristic(address,gattCharacteristic);
                     }else if(uuid.equals(BleConfig.UUID_CHARACTERISTIC_TEXT)){
                         mWriteCharacteristic = gattCharacteristic;
                         Log.e("write_characteristic", "Characteristic: " + uuid);
@@ -220,7 +219,7 @@ public class MainActivity extends BaseActivity {
         public void onServiceConnected(ComponentName componentName,
                                        IBinder service) {
             mBluetoothLeService = ((BluetoothLeService.LocalBinder) service).getService();
-            Log.e(TAG, "服务连接成功");
+            Log.e(TAG, "");
             if (!mBluetoothLeService.initialize()) {
                 Log.e(TAG, "Unable to initialize Bluetooth");
                 finish();
@@ -249,7 +248,7 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main1);
 
-        initBleDevice();//初始化蓝牙
+        initBleDevice();
         initView();
     }
 
@@ -264,7 +263,7 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    //播放音乐
+
     public byte[] sendData(int play) {
         byte[] data = new byte[Command.qppDataSend.length];
         System.arraycopy(Command.qppDataSend, 0, data, 0, data.length);
@@ -340,7 +339,7 @@ public class MainActivity extends BaseActivity {
                     if (!granted) {
                         finish();
                     } else {
-                        bindService();// 绑定服务
+                        bindService();
                     }
                 }
             });
@@ -400,7 +399,7 @@ public class MainActivity extends BaseActivity {
             finish();
             return;
         } else {
-            //打开蓝牙  则开始绑定服务
+
             bindService();
         }
         super.onActivityResult(requestCode, resultCode, data);

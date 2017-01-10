@@ -8,7 +8,7 @@ import com.quascenta.BluetoothLoggingDevice.BleVO.BleDevice;
 
 
 /**
- * Created by liulei on 2016/11/25.
+ * Created by Akshay
  */
 
 public abstract class BleLisenter {

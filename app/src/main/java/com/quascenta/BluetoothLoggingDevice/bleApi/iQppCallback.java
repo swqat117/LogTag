@@ -3,7 +3,7 @@ package com.quascenta.BluetoothLoggingDevice.bleApi;
 import android.bluetooth.BluetoothGatt;
 
 /**
- * Created by liulei on 2016/11/29.
+ * Created by Akshay on 2016/11/29.
  */
 
 public interface iQppCallback {

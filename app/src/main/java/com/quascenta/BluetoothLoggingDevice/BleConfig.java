@@ -3,14 +3,14 @@ package com.quascenta.BluetoothLoggingDevice;
 import java.util.UUID;
 
 /**
- * Created by liulei on 2016/11/29.
+ * Created by Akshay on 2017/1/3.
  */
 
 public class BleConfig {
     //The default scan time
     public final static int SCAN_PERIOD = 10000;
     // Connection time-out limit
-    public final static int CONNECT_TIME_OUT         = 10 * 1000;
+    public final static int CONNECT_TIME_OUT = 10 * 1000;
 
     //Connection successful status
     public final static int CONNECTED = 2505;
@@ -19,10 +19,10 @@ public class BleConfig {
     //The disconnected state is a disconnected state
     public final static int DISCONNECT = 2503;
     //Broadcast corresponds to the product value
-    public static final byte[] BROADCAST_SPECIFIC_PRODUCT                       = {'T', 'R', 0, 1};
+    public static final byte[] BROADCAST_SPECIFIC_PRODUCT= {'T', 'R', 0, 1};
 
     /* Manufacturer Specific Data. */
-    public static final int BLE_GAP_AD_TYPE_MANUFACTURER_SPECIFIC_DATA          = 0xFF;
+    public static final int BLE_GAP_AD_TYPE_MANUFACTURER_SPECIFIC_DATA = 0xFF;
 
     //Describes the UUID string  00002901-0000-1000-8000-00805f9b34fb
     public final static String UUID_DESCRIPTOR_TEXT     = "00002902-0000-1000-8000-00805f9b34fb";
