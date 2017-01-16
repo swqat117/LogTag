@@ -60,5 +60,12 @@
         <item name="android:paddingBottom">24dp</item>
         <item name="android:orientation">vertical</item>
     </style>
-
+    <style name="device_entry_text">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:layout_marginLeft">12dp</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:layout_toRightOf">@id/device_icon</item>
+    </style>
 </resources>

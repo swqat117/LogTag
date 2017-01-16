@@ -3,13 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.quascenta.petersroad.broadway">
 
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.INTERNET" />\
+    <uses-permission android:name="android.permission.INTERNET" />
+    \
     <!-- Required for Google Login -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
@@ -38,11 +38,12 @@
             android:value="@string/facebook_app_id" />
 
         <service android:name="com.quascenta.petersroad.services.SensorService" />
-        <service android:name="com.quascenta.BluetoothLoggingDevice.BluetoothLeService"/>
+        <service android:name="com.quascenta.BluetoothLoggingDevice.BluetoothLeService" />
+
         <activity
             android:name="com.quascenta.petersroad.activities.MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name="com.quascenta.petersroad.activities.LoginActivity"
             android:label="@string/title_activity_fullscreen"
@@ -56,7 +57,7 @@
         <activity
             android:name="com.quascenta.petersroad.activities.MainActivity1"
             android:label="Say Cheese"
-            android:theme="@style/Base.Theme.DesignDemo"/>
+            android:theme="@style/Base.Theme.DesignDemo" />
         <activity
             android:name="com.quascenta.petersroad.activities.SearchableActivity"
             android:configChanges="orientation"
@@ -66,7 +67,7 @@
             android:windowSoftInputMode="stateHidden">
             <meta-data
                 android:name="android.app.searchable"
-                android:resource="@layout/searchable"/>
+                android:resource="@layout/searchable" />
         </activity>
         <activity
             android:name="com.quascenta.petersroad.activities.DetailSensorsActivity"
@@ -93,61 +94,35 @@
         </activity>
         <activity
             android:name="com.quascenta.petersroad.activities.GoogleSigninActivity"
-            android:label="GoogleSignInActivity">
-
-        </activity>
-        <activity android:name="com.quascenta.logTag.main.activities.LogTagLoginActivity">
-
-        </activity>
-
-        <activity android:name="com.quascenta.logTag.main.activities.LogTagMainActivity"
-
-            android:label="LogTagActivity">
-
-
-        </activity>
+            android:label="GoogleSignInActivity" />
+        <activity android:name="com.quascenta.logTag.main.activities.LogTagLoginActivity" />
+        <activity
+            android:name="com.quascenta.logTag.main.activities.LogTagMainActivity"
+            android:label="LogTagActivity" />
         <activity android:name="com.quascenta.BluetoothLoggingDevice.activity.MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
-
-        <activity android:name="com.quascenta.BluetoothLoggingDevice.activity.BaseActivity"/>
-
+        <activity android:name="com.quascenta.BluetoothLoggingDevice.activity.BaseActivity" />
         <activity
             android:name="com.quascenta.BluetoothLoggingDevice.activity.DeviceControlActivity"
             android:screenOrientation="portrait" />
-        <activity android:name="com.quascenta.logTag.main.activities.LogTagDashboardActivity"
-            android:label="Dashboard">
-
-        </activity>
-
-
-
-
-        <activity android:name="com.facebook.FacebookActivity"
-            android:configChanges=
-                "keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+        <activity
+            android:name="com.quascenta.logTag.main.activities.LogTagDashboardActivity"
+            android:label="Dashboard" />
+        <activity
+            android:name="com.facebook.FacebookActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             tools:ignore="DuplicateActivity" />
 
-        <activity
-            android:name="com.quascenta.QBlueLogger.activities.QppActivity"
+        <activity android:name="com.quascenta.QBlueLogger.Test2Activity" android:label="Devices" android:screenOrientation="portrait"><intent-filter>
+        <action android:name="android.intent.action.MAIN" />
 
-            android:windowSoftInputMode = "stateHidden"
-
-            android:label="@string/title_activity_qpp"
-            android:screenOrientation = "portrait" >
-
-        </activity>
-
-        <activity android:name="com.quascenta.QBlueLogger.activities.QppMainActivity"
-            android:label="@string/app_name"
-            android:screenOrientation="portrait" />
-
+        <category android:name="android.intent.category.LAUNCHER" />
+    </intent-filter></activity>
+        <activity android:name="com.quascenta.QBlueLogger.BluetoothDiscovery" android:label="@string/app_name"
+            android:screenOrientation="portrait" android:theme="@style/AppTheme" />
     </application>
 
 </manifest>

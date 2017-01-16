@@ -98,7 +98,6 @@
     <string name="loading" />
 
 
-
     <string name="label_device_name">Device Name:</string>
 
 
@@ -131,7 +130,6 @@
     <string name="text_repeat">Repeat</string>
 
     <string name="text_counter_def">0</string>
-
 
 
     <string name="hello_world">Hello world!</string>
@@ -191,6 +189,15 @@
     <string name="lined_num">Lined Num</string>
     <string name="line_success">Successful</string>
     <string name="line_disconnect">Disconnected</string>
+    <string name="discovered_devices">Devices Discovered</string>
+    <string name="button_scan">SCAN</string>
+    <string name="bt_conn_established">Connection is Established</string>
+    <string name="bt_conn_established_inact">Not est</string>
+    <string name="device_list_empty">No devices found</string>
+    <string name="device_press">Select Device</string>
+    <string name="device_name">Device :</string>
+    <string name="device_address">Address</string>
+    <string name="device_services">Services</string>
 
 
 </resources>
