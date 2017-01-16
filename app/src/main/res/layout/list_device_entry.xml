@@ -1,0 +1,51 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="8dp" >
+
+
+    <ImageView
+        android:id="@+id/device_icon"
+        android:layout_width="75dp"
+        android:layout_height="48dp"
+        android:adjustViewBounds="true"
+        android:src="@drawable/devices" />
+
+    <TextView
+        android:id="@+id/device_name_title"
+        style="@style/device_entry_text"
+        android:text="@string/device_name" />
+
+    <TextView
+        android:id="@+id/device_address_title"
+        style="@style/device_entry_text"
+        android:text="@string/device_address"
+        android:layout_below="@id/device_name_title" />
+
+    <TextView
+        android:id="@+id/device_services_title"
+        style="@style/device_entry_text"
+        android:text="@string/device_services"
+        android:layout_below="@id/device_address_title" />
+
+    <TextView
+        android:id="@+id/device_name"
+        style="@style/device_entry_text"
+        android:layout_toRightOf="@id/device_name_title" />
+
+    <TextView
+        android:id="@+id/device_mac"
+        style="@style/device_entry_text"
+        android:layout_below="@id/device_name"
+        android:maxLines="1"
+        android:layout_toRightOf="@id/device_address_title" />
+
+    <TextView
+        android:id="@+id/device_services"
+        style="@style/device_entry_text"
+        android:layout_below="@id/device_mac"
+        android:maxLines="1"
+        android:layout_toRightOf="@id/device_services_title" />
+</RelativeLayout>
