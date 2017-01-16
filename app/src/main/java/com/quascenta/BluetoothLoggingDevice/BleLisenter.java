@@ -23,7 +23,7 @@ public abstract class BleLisenter {
     public abstract void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord);
 
     //When the write succeeds
-    public void onWrite(BluetoothGatt gatt,BluetoothGattCharacteristic characteristic, int status){};
+    public void onWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic){};
 
     //Has been connected
 //    public void onConnected(BluetoothDevice device){};

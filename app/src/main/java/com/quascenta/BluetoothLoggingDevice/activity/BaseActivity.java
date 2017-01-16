@@ -12,11 +12,8 @@ import android.util.SparseArray;
 import com.quascenta.petersroad.broadway.R;
 
 
-public class
-BaseActivity extends Activity {
+public class BaseActivity extends Activity {
     protected final String TAG = this.getClass().getSimpleName();
-    private int                   mPermissionIdx = 0x10;
-    private SparseArray<GrantedResult> mPermissions   = new SparseArray<>();
 
     @Override
     public void onCreate(Bundle bundle) {
@@ -27,6 +24,9 @@ BaseActivity extends Activity {
     public void setContentView(int layoutResID) {
         super.setContentView(layoutResID);
     }
+
+    private int                   mPermissionIdx = 0x10;
+    private SparseArray<GrantedResult> mPermissions   = new SparseArray<>();
 
     @SuppressLint("Override")
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -108,8 +108,7 @@ BaseActivity extends Activity {
     }
 
     public static abstract class GrantedResult implements Runnable{
-        public boolean mGranted;
-
+        private boolean mGranted;
         public abstract void onResult(boolean granted);
         @Override
         public void run(){

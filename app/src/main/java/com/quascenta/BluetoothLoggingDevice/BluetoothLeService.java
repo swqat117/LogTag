@@ -19,13 +19,13 @@ import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
+
 import com.quascenta.BluetoothLoggingDevice.BleVO.BleDevice;
-import com.quascenta.BluetoothLoggingDevice.bleApi.QppApi;
 import com.quascenta.BluetoothLoggingDevice.bleApi.iQppCallback;
+import com.quascenta.BluetoothLoggingDevice.bleApi.QppApi;
 import com.quascenta.petersroad.broadway.R;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,68 +36,48 @@ import java.util.UUID;
 @SuppressWarnings("deprecation")
 public class BluetoothLeService extends Service {
 
+    private final static String TAG = BluetoothLeService.class.getSimpleName();
     public static final String ACTION_GATT_CONNECTED = "1" ;
     public static final String ACTION_GATT_DISCONNECTED ="0" ;
     public static final String ACTION_GATT_SERVICES_DISCOVERED = "2";
     public static final String ACTION_GATT_DATA_AVAILABLE = "3";
     public static final String ACTION_DATA_AVAILABLE = "3";
-    private final static String TAG = BluetoothLeService.class.getSimpleName();
     public static String EXTRA_DATA = "extra_data";
-    protected static String uuidQppService = "0000fee9-0000-1000-8000-00805f9b34fb";
-    protected static String uuidQppCharWrite = "d44bc439-abfd-45a2-b575-925416129600";
-    private final IBinder mBinder = new LocalBinder();
-    //public
-    public boolean mScanning;
     boolean isInitialize;
     private Handler mHandler;
     private BluetoothManager mBluetoothManager;
     private BluetoothAdapter mBluetoothAdapter;
+    protected static String uuidQppService = "00001800-0000-1000-8000-00805f9b34fb";
+    protected static String uuidQppCharWrite = "d44bc439-abfd-45a2-b575-925416129600";
+    //public
+    public boolean mScanning;
     private String x1;
     private ArrayList<BluetoothDevice> mScanDevices = new ArrayList<>();
     private ArrayList<BluetoothDevice> mConnectedDevices = new ArrayList<>();
     //Multiple device connections must put the gatt object in the collection
     private Map<String, BluetoothGatt> mBluetoothGattMap;
-    final Runnable runnableSend = new Runnable() {
-
-
-        private void QppSendNextData(String address) {
-            byte[] qppDataSend1 = null;
-            try {
-                qppDataSend1 = x1.getBytes();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-
-
-            if (qppDataSend1 == null) {
-                Log.e(TAG, "--> qppDataSend1 = null!");
-                return;
-            }
-
-            if (!QppApi.qppSendData(mBluetoothGattMap.get(address), qppDataSend1)) {
-                Log.e(TAG, "--> Send data failed");
-            }
-
-
-
-        }
-        public void run() {
-            QppSendNextData(x1);
-        }
-    };
     //The address of the connected device
     private List<String> mConnectedAddressList;
-    private Boolean qppSendDataState = true;
+    private Boolean qppSendDataState = false;
     private String data = null;
+
     private Handler handlerSend = new Handler();
+
+
+
+
+
+
+
+
+
     private Runnable mConnectTimeout = new Runnable() { //
         @Override
         public void run() {
             Toast.makeText(getApplication(), R.string.connect_timeout,Toast.LENGTH_SHORT).show();
         }
     };
-    private BleLisenter mBleLisenter;
+
     /**
      * Connection changes or services were found in a variety of state callbacks
      */
@@ -105,6 +85,9 @@ public class BluetoothLeService extends Service {
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status,
                                             int newState) {
+
+
+            Log.e(TAG,"onConnectionState change callback");
             BluetoothDevice device = gatt.getDevice();
             //There is a problem here Every time a new object is generated that causes the same device to be disconnected and the connection produces two objects
             BleDevice bleDevice = new BleDevice(device);
@@ -130,21 +113,20 @@ public class BluetoothLeService extends Service {
 
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
+            Log.e(TAG,"onServices Discovered change callback");
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 mBleLisenter.onServicesDiscovered(gatt);
             } else {
                 Log.w(TAG, "onServicesDiscovered received: " + status);
             }
 
-            //      setConnectState(R.string.qpp_support);
-//      setConnectState(R.string.qpp_not_support);
-            isInitialize = QppApi.qppEnable(gatt, uuidQppService, uuidQppCharWrite);
+
         }
 
         @Override
         public void onCharacteristicRead(BluetoothGatt gatt,
                                          BluetoothGattCharacteristic characteristic, int status) {
-            Log.d(TAG, "onCharacteristicRead:" + status);
+            Log.e(TAG, "onCharacteristicRead:" + status);
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 mBleLisenter.onRead(gatt.getDevice());
             }
@@ -154,22 +136,17 @@ public class BluetoothLeService extends Service {
 
         @Override
         public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+            Log.e(TAG,"onCharWrite"+new String(characteristic.getValue()));
+            if(status == BluetoothGatt.GATT_SUCCESS){
+                mBleLisenter.onWrite(gatt, characteristic);
 
-            String x = null;
-            System.out.println("--------write success----- status:" + status);
-            mBleLisenter.onWrite(gatt,characteristic,status);
-            if (status == BluetoothGatt.GATT_SUCCESS && qppSendDataState) {
-                QppApi.qppSendData(gatt,x1.getBytes());
-                if (handlerSend != null && runnableSend != null) {
-                    QppApi.qppSendData(gatt,x.getBytes());
-                    Log.i(TAG, "--> A GATT Characteristic Continuous Write operation completed successfully");
-                }
-            }else if (status == BluetoothGatt.GATT_SUCCESS) {
-                QppApi.qppSendData(gatt,x1.getBytes());
-                Log.i(TAG, "--> A GATT Characteristic Write operation completed successfully");
-            }else if (status == BluetoothGatt.GATT_FAILURE) {
-                Log.i(TAG, "--> A GATT Characteristic Write operation completed is failure");
+
             }
+
+
+            System.out.println("--------write success----- status:" + status + "----- value "+new String(characteristic.getValue()));
+
+
 
 
         }
@@ -182,8 +159,7 @@ public class BluetoothLeService extends Service {
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt,
                                             BluetoothGattCharacteristic characteristic) {
-            QppApi.updateValueForNotification(gatt, characteristic);
-            QppApi.updateValueForNotification(gatt, characteristic);
+            Log.e(TAG,"onCharacteristic change callback");
             mBleLisenter.onChanged(gatt, characteristic);
 
         }
@@ -191,11 +167,12 @@ public class BluetoothLeService extends Service {
         @Override
         public void onDescriptorWrite(BluetoothGatt gatt,
                                       BluetoothGattDescriptor descriptor, int status) {
+            mBleLisenter.onDescriptorWriter(gatt);
             UUID uuid = descriptor.getCharacteristic().getUuid();
             Log.w(TAG,"onDescriptorWrite");
             Log.e(TAG,"descriptor_uuid:"+uuid);
-            QppApi.setQppNextNotify(gatt, true);
-            mBleLisenter.onDescriptorWriter(gatt);
+
+
 
         }
 
@@ -213,14 +190,6 @@ public class BluetoothLeService extends Service {
             System.out.println("rssi = " + rssi);
         }
     };
-    private BluetoothAdapter.LeScanCallback mLeScanCallback = new BluetoothAdapter.LeScanCallback() {
-
-        @Override
-        public void onLeScan(final BluetoothDevice device, int rssi, final byte[] scanRecord) {
-            mBleLisenter.onLeScan(device, rssi, scanRecord);
-            mScanDevices.add(device);
-        }
-    };
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -231,15 +200,6 @@ public class BluetoothLeService extends Service {
 
     }
 
-//    /**
-//     * Finds and returns the bluetooth device through Bluetooth address
-//     * @param address
-//     * @return
-//     */
-//    public BleDevice getBleDevice(String address){
-//        return new BleDevice(address.)
-//    }
-
     @Override
     public void onCreate() {
         super.onCreate();
@@ -249,7 +209,7 @@ public class BluetoothLeService extends Service {
 
            @Override
             public void onQppReceiveData(BluetoothGatt mBluetoothGatt, String qppUUIDForNotifyChar, byte[] qppData) {
-               data = new String(qppData);
+               Log.e(TAG,"onQppRecieveData"+new String(qppData));
 
         }
 
@@ -281,6 +241,24 @@ public class BluetoothLeService extends Service {
         }
     }
 
+    private BluetoothAdapter.LeScanCallback mLeScanCallback = new BluetoothAdapter.LeScanCallback() {
+
+        @Override
+        public void onLeScan(final BluetoothDevice device, int rssi, final byte[] scanRecord) {
+            mBleLisenter.onLeScan(device, rssi, scanRecord);
+            mScanDevices.add(device);
+        }
+    };
+
+//    /**
+//     * Finds and returns the bluetooth device through Bluetooth address
+//     * @param address
+//     * @return
+//     */
+//    public BleDevice getBleDevice(String address){
+//        return new BleDevice(address.)
+//    }
+
     /**
      * Get the scanned device
      * @return scanned device
@@ -298,6 +276,13 @@ public class BluetoothLeService extends Service {
         return mBluetoothManager.getConnectedDevices(BluetoothProfile.GATT);
     }
 
+
+    public class LocalBinder extends Binder {
+        public BluetoothLeService getService() {
+            return BluetoothLeService.this;
+        }
+    }
+
     @Override
     public IBinder onBind(Intent intent) {
         return mBinder;
@@ -308,6 +293,8 @@ public class BluetoothLeService extends Service {
         close();
         return super.onUnbind(intent);
     }
+
+    private final IBinder mBinder = new LocalBinder();
 
     /**
      * Initializes the ble Bluetooth device
@@ -360,7 +347,11 @@ public class BluetoothLeService extends Service {
         //10s after the timeout prompt
         mHandler.postDelayed(mConnectTimeout,BleConfig.CONNECT_TIME_OUT);
         if (mBluetoothGattMap.get(address) != null && mConnectedAddressList.contains(address)) {
-            return mBluetoothGattMap.get(address).connect();
+            if (mBluetoothGattMap.get(address).connect()) {
+                return true;
+            } else {
+                return false;
+            }
         }
 
         final BluetoothDevice device = mBluetoothAdapter
@@ -423,18 +414,23 @@ public class BluetoothLeService extends Service {
 
 
     public boolean wirteCharacteristic(String address, BluetoothGattCharacteristic characteristic,byte[] value) {
+        Log.e(TAG,"wirte Characteristic value : "+new String(value));
+
         if (mBluetoothAdapter == null || mBluetoothGattMap.get(address) == null) {
             Log.w(TAG, "BluetoothAdapter not initialized");
             return false;
         }
-        if(characteristic != null && BleConfig.UUID_CHARACTERISTIC.equals(characteristic.getUuid())){
+        if(characteristic != null && BleConfig.UUID_CHARACTERISTIC.equals(characteristic.getUuid())) {
+
             characteristic.setValue(value);
             boolean result = mBluetoothGattMap.get(address).writeCharacteristic(characteristic);
-            Log.d(TAG, address + " -- write data:" + Arrays.toString(value));
-            Log.d(TAG, address + " -- write result:" + result);
-            return result;
+            if (result) {
+                Log.d(TAG, address + " -- write data:" + new String(characteristic.getValue()));
+                Log.d(TAG, address + " -- write result:" + result);
+                return result;
+            }
         }
-        return true;
+        return false    ;
 
     }
 
@@ -514,14 +510,10 @@ public class BluetoothLeService extends Service {
         return mBluetoothGattMap.get(address).readRemoteRssi();
     }
 
+    private BleLisenter mBleLisenter;
+
     public void setOnBleLisenter(BleLisenter bleLisenter) {
         mBleLisenter = bleLisenter;
-    }
-
-    public class LocalBinder extends Binder {
-        public BluetoothLeService getService() {
-            return BluetoothLeService.this;
-        }
     }
 
 }

@@ -33,9 +33,9 @@ import com.quascenta.BluetoothLoggingDevice.BleConfig;
 import com.quascenta.BluetoothLoggingDevice.BleLisenter;
 import com.quascenta.BluetoothLoggingDevice.BleVO.BleDevice;
 import com.quascenta.BluetoothLoggingDevice.BluetoothLeService;
-import com.quascenta.BluetoothLoggingDevice.Command;
 import com.quascenta.BluetoothLoggingDevice.LeDeviceListAdapter;
 import com.quascenta.BluetoothLoggingDevice.bleApi.QppApi;
+import com.quascenta.BluetoothLoggingDevice.bleApi.iQppCallback;
 import com.quascenta.petersroad.broadway.R;
 
 import java.util.Arrays;
@@ -60,7 +60,8 @@ public class MainActivity extends BaseActivity {
     private Button send;
     private BluetoothLeService mBluetoothLeService;
     private String currentAddress;
-
+    boolean isInitialize  = false;
+    boolean qppSendDataState = false;
     private static final int REQUEST_ENABLE_BT = 1;
 
     private Handler mHandler = new Handler() {
@@ -93,6 +94,7 @@ public class MainActivity extends BaseActivity {
                                 public void run() {
                                     BleDevice bleDevice = new BleDevice(device);
                                     mLeDeviceListAdapter.addDevice(bleDevice);
+
                                     mLeDeviceListAdapter.notifyDataSetChanged();
                                 }
                             });
@@ -100,7 +102,7 @@ public class MainActivity extends BaseActivity {
 
                         @Override
                         public void onConnectionChanged(final BluetoothGatt gatt, final BleDevice device) {
-                            Log.e(TAG, "onConnectionChanged");
+                            Log.v(TAG, "onConnectionChanged");
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -126,22 +128,79 @@ public class MainActivity extends BaseActivity {
                         @Override
                         public void onServicesDiscovered(BluetoothGatt gatt) {
                             super.onServicesDiscovered(gatt);
+                               mBluetoothGatt = gatt;
 
-                    if (QppApi.qppEnable(mBluetoothGatt, uuidQppService, uuidQppCharWrite)) {}
+                            if (QppApi.qppEnable(gatt, uuidQppService, uuidQppCharWrite)) {
+                                isInitialize = true;
+                                qppSendDataState = true;
+                                //     setConnectState(R.string.qpp_support);
+                            }else {
+                                isInitialize = false;
+                                //      setConnectState(R.string.qpp_not_support);
+                            }
                             //notify
                             displayGattServices(gatt.getDevice().getAddress(), mBluetoothLeService.getSupportedGattServices(gatt.getDevice().getAddress()));
                         }
 
                         @Override
                         public void onChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
-                            Log.e(TAG, "data===" + Arrays.toString(characteristic.getValue()));
-
                             QppApi.updateValueForNotification(gatt, characteristic);
+                            Log.e(TAG, "data===" + Arrays.toString(characteristic.getValue()));
+                            Log.e(TAG,new String(characteristic.getValue()));
+
+
+
+
+
                         }
+
 
                         @Override
-                        public void onWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+                        public void onWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
+                         Log.d(TAG,new String(characteristic.getValue()));
+                            mWriteCharacteristic = characteristic;
+
+                                handlersend1.postDelayed(runnablesend1,5);
+
+
+
+
+
+                           Log.e(TAG,"onwrite passing setqpp next notify");
+                           super.onWrite(gatt, characteristic);
+
                         }
+                        private Handler handlersend1 = new Handler();
+                        final Runnable runnablesend1 = new Runnable() {
+                            @Override
+                            public void run() {
+
+                               // QppApi.qppSendData(mBluetoothGatt,mWriteCharacteristic,mWriteCharacteristic.getValue());
+                                int length = mWriteCharacteristic.getValue().length;
+                                int count = 0;
+                                int offset = 0;
+
+                                while (offset < length) {
+                                    if ((length - offset) < 20)
+                                        count = length - offset;
+                                    else
+                                        count = 20;
+
+                                    // Give some time to the MCU
+                                    try {
+                                        Thread.sleep(1000);
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                    byte tempArray[] = new byte[count];
+                                    System.arraycopy(mWriteCharacteristic.getValue(), offset, tempArray, 0, count);
+                                    System.out.println(new String(tempArray));
+                                    QppApi.qppSendData(mBluetoothGatt, tempArray);
+                                    offset = offset + count;
+                                }
+                            }
+                        };
 
                         @Override
                         public void onRead(BluetoothDevice device) {
@@ -152,9 +211,10 @@ public class MainActivity extends BaseActivity {
 
                         @Override
                         public void onDescriptorWriter(BluetoothGatt gatt) {
+                            QppApi.setQppNextNotify(gatt,true);
                             super.onDescriptorWriter(gatt);
 
-                         QppApi.setQppNextNotify(gatt, true);
+
                         }
                     });
 
@@ -173,11 +233,11 @@ public class MainActivity extends BaseActivity {
 //        data[7] = (byte) ((color >> 24) & 0xff);
 //        boolean result = mBluetoothLeService.wirteCharacteristic(address, mWriteCharacteristic, getWriteData(data));
         boolean result = mBluetoothLeService.wirteCharacteristic(address, mWriteCharacteristic, sendData(1));
-        Log.e(TAG, "result==" + result);
+        Log.v(TAG, "result==" + result);
         return result;
     }
 
-    public byte[] getWriteData(byte[] data) {
+    public byte[] getWriteData() {
 //        byte[] bytes = new byte[data.length + 1];
         byte[] bytes = new byte[]{70, 127, -97, -80, -54, -117, 105, -76, -57};
         return bytes;
@@ -198,11 +258,11 @@ public class MainActivity extends BaseActivity {
                 List<BluetoothGattCharacteristic> gattCharacteristics = gattService.getCharacteristics();
                 for (BluetoothGattCharacteristic gattCharacteristic : gattCharacteristics) {
                     uuid = gattCharacteristic.getUuid().toString();
-                    Log.e("all_characteristic", "Characteristic: " + uuid);
+                    Log.v("all_characteristics", "Characteristic: " + uuid);
                     if (uuid.equals(BleConfig.UUID_NOTIFY_TEXT)) {
-                        Log.e("console", "2gatt Characteristic: " + uuid);
+                        Log.v("console", "2gatt Characteristic: " + uuid);
                         mBluetoothLeService.setCharacteristicNotification(address,gattCharacteristic, true);//
-//                        mBluetoothLeService.readCharacteristic(address,gattCharacteristic);
+                        mBluetoothLeService.readCharacteristic(address,gattCharacteristic);
                     }else if(uuid.equals(BleConfig.UUID_CHARACTERISTIC_TEXT)){
                         mWriteCharacteristic = gattCharacteristic;
                         Log.e("write_characteristic", "Characteristic: " + uuid);
@@ -250,7 +310,15 @@ public class MainActivity extends BaseActivity {
 
         initBleDevice();
         initView();
-    }
+        QppApi.setCallback(new iQppCallback() {
+
+            @Override
+            public void onQppReceiveData(BluetoothGatt mBluetoothGatt, String qppUUIDForNotifyChar, byte[] qppData) {
+               System.out.println("Mainactivity"+new String(qppData));
+
+
+            }
+    });}
 
     private void bindService() {
         Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
@@ -265,11 +333,11 @@ public class MainActivity extends BaseActivity {
 
 
     public byte[] sendData(int play) {
-        byte[] data = new byte[Command.qppDataSend.length];
-        System.arraycopy(Command.qppDataSend, 0, data, 0, data.length);
+        byte[] data = hexStringToByteArray("0x53");
+       /* System.arraycopy(Command.qppDataSend, 0, data, 0, data.length);
 
         data[6] = 0x03;
-        data[7] = (byte) play;
+        data[7] = (byte) play;*/
         Log.e(TAG,"data:"+Arrays.toString(data));
         return data;
     }
@@ -283,6 +351,7 @@ public class MainActivity extends BaseActivity {
             public void onClick(View v) {
                 if(currentAddress != null){
                     changeLevelInner(currentAddress,-16717569);
+                    qppSendDataState = true;
                 }
             }
         });
@@ -295,10 +364,7 @@ public class MainActivity extends BaseActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 final BleDevice device = mLeDeviceListAdapter.getDevice(position);
                 if (device != null) {
-                    final Intent intent = new Intent(MainActivity.this, DeviceControlActivity.class);
-                    intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_NAME, device.getmBleName());
-                    intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS, device.getBleAddress());
-                    startActivity(intent);
+
                 }
                 if (mBluetoothLeService.mScanning) {
                     mBluetoothLeService.scanLeDevice(false);
@@ -348,7 +414,7 @@ public class MainActivity extends BaseActivity {
 
     private void setConnectedNum() {
         if (mBluetoothLeService != null) {
-            mConnectedNum.setText(getString(R.string.lined_num) + mBluetoothLeService.getConnectedDevices().size());
+            mConnectedNum.setText(getString(R.string.linednum)+ mBluetoothLeService.getConnectedDevices().size());
         }
     }
 
@@ -412,6 +478,16 @@ public class MainActivity extends BaseActivity {
             mBluetoothLeService.scanLeDevice(false);
         }
         mLeDeviceListAdapter.clear();
+    }
+    public static byte[] hexStringToByteArray(String s) {
+        int len = s.length();
+        byte[] data = new byte[len/2];
+
+        for(int i = 0; i < len; i+=2){
+            data[i/2] = (byte) ((Character.digit(s.charAt(i), 16) << 4) + Character.digit(s.charAt(i+1), 16));
+        }
+
+        return data;
     }
 
 }

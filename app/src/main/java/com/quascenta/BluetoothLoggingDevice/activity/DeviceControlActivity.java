@@ -24,6 +24,8 @@ import android.widget.TextView;
 
 
 import com.quascenta.BluetoothLoggingDevice.BluetoothLeService;
+import com.quascenta.BluetoothLoggingDevice.bleApi.QppApi;
+import com.quascenta.BluetoothLoggingDevice.bleApi.iQppCallback;
 import com.quascenta.petersroad.broadway.R;
 
 import java.text.NumberFormat;
@@ -142,6 +144,13 @@ private final BroadcastReceiver mGattUpdateReceiver = new BroadcastReceiver() {
              gattServiceIntent.putExtra("value",mDataField.getText().toString());
              gattServiceIntent.putExtra("QPPSENDDATA_STATE",true);
                startService(gattServiceIntent);
+            }
+        });
+
+        QppApi.setCallback(new iQppCallback() {
+            @Override
+            public void onQppReceiveData(BluetoothGatt mBluetoothGatt, String qppUUIDForNotifyChar, byte[] qppData) {
+                Log.d(TAG,"onQPPReceive data  = "+new String(qppData));
             }
         });
     }

@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 
-import com.quascenta.QBlueLogger.Test2Activity;
+import com.quascenta.QBlueLogger.activities.QppMainActivity;
 import com.quascenta.logTag.main.EventListeners.LogTagCustomLoginListener;
 import com.quascenta.logTag.main.EventListeners.LogTagCustomLogoutListener;
 import com.quascenta.logTag.main.configuration.LogTagLoginBuilder;
@@ -118,7 +118,7 @@ public class LogTagDashboardActivity extends AppCompatActivity implements LogTag
     void initBluetoothLoggers(){
         String x = Userpreferences.with(getApplicationContext()).read("user_session_key", "Unavailable");
         currentUser = Userpreferences.with(getApplicationContext()).readObject("user_session_key");
-        Intent intent = new Intent(this, Test2Activity.class);
+        Intent intent = new Intent(this, QppMainActivity.class);
         startActivity(intent);
         finish();
     }
