@@ -39,6 +39,7 @@
 
         <service android:name="com.quascenta.petersroad.services.SensorService" />
         <service android:name="com.quascenta.BluetoothLoggingDevice.BluetoothLeService"/>
+        <service android:name="com.quascenta.BluetoothLoggingDevice.BluetoothLeService1"/>
         <activity
             android:name="com.quascenta.petersroad.activities.MainActivity"
             android:label="@string/app_name"

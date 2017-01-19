@@ -20,7 +20,16 @@ public class BleConfig {
     public final static int DISCONNECT = 2503;
     //Broadcast corresponds to the product value
     public static final byte[] BROADCAST_SPECIFIC_PRODUCT= {'T', 'R', 0, 1};
-
+    public final static int ConnectionChanged = 2511;
+    public final static int ServicesDiscovered = 2512;
+    public final static int Read = 2513;
+    public final static int Write = 2514;
+    public final static int Changed = 2515;
+    public final static int DescriptorWriter = 2516;
+    public final static int DescriptorRead = 2517;
+    public final static int Start = 2518;
+    public final static int Stop = 2519;
+    public final static int ConnectTimeOut = 2510;
     /* Manufacturer Specific Data. */
     public static final int BLE_GAP_AD_TYPE_MANUFACTURER_SPECIFIC_DATA = 0xFF;
 
